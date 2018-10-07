@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+	<!--online_fonts-->
+	<link href="//fonts.googleapis.com/css?family=Sansita:400,400i,700,700i,800,800i,900,900i&amp;subset=latin-ext" rel="stylesheet">
+	<link href="//fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+	<!--//online_fonts-->
+	<link href="/css/style.css" rel='stylesheet' type='text/css' media="all" />
+	<!--stylesheet-->
+</head>
+
+<body>
+	<h1>Welcome to register my blog.</h1>
+	<div class="form-w3ls">
+		<div class="form-head-w3l">
+			<h2>s</h2>
+		</div>
+		<ul class="tab-group cl-effect-4">
+			<li class="tab active"><a href="#signin-agile">Sign In</a></li>
+			<li class="tab"><a href="#signup-agile">Sign Up</a></li>
+		</ul>
+		<div class="tab-content">
+			<div id="signup-agile">
+				<form action="/user/insert" method="post">
+
+					<p class="header">Email Address</p>
+					<input type="email" id="user_email" name="user_email" placeholder="Email" required="required">
+
+					<p class="header">Password</p>
+					<input type="password" id="user_password" name="user_password" placeholder="Password" required="required">
+
+					<p class="header">Confirm Password</p>
+					<input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required="required">
+
+					<input type="submit" class="register" value="Sign up">
+
+				</form>
+			</div>
+		</div><!-- tab-content -->
+	</div> <!-- /form -->
+
+	<!-- js files -->
+	<script src='/js/jquery.min.js'></script>
+	<!-- <script src="/js/index.js"></script> -->
+	<!-- /js files -->
+
+
+</body>
+
+</html>
