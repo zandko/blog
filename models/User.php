@@ -13,6 +13,42 @@ class User extends Model
     protected $tableName = 'users';
     protected $fillable = ['user_name', 'user_password', 'user_email', 'user_profile_photo', 'user_rights', 'user_age', 'user_telephone_number', 'user_nickname', 'user_birthday', 'user_level'];
 
+    protected function _before_write()
+    {
+        $this->data['user_password'] = md5($_POST['user_password']);
+    }
+
+    public function create()
+    {
+        $stmt = $this->_db->prepare("SELECT user_email FROM users WHERE user_email=?");
+        $stmt->execute([
+            $this->data['user_email'],
+        ]);
+        $ret = $stmt->fetch(\PDO::FETCH_ASSOC);
+        return $ret;
+    }
+
+    public function delAll()
+    {   
+        if(isset($_POST['noList'])){
+            $keys = [];
+            $values = [];
+            foreach ($_POST['noList'] as $v) {
+                $keys[] = '?';
+                $values[] = $v;
+            }
+            $keys = implode(',', $keys);
+            $sql = "DELETE FROM users WHERE id in($keys)";
+            $stmt = $this->_db->prepare($sql);
+            return $stmt->execute($values);
+        }else {
+            return false;
+        }
+
+        
+        
+    }
+
     public function register()
     {
         $redis = Redis::getInstance();
@@ -50,7 +86,6 @@ class User extends Model
         $redis->lpush('email', $message);
         echo "注册成功";
     }
-
 
     public function login()
     {

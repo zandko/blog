@@ -40,9 +40,9 @@ class Model
      * @param mixed $data 表单数据
      * @return array
      */
-    
+
     public function fill($data)
-    {   
+    {
         foreach ($data as $k => $v) {
             if (!in_array($k, $this->fillable)) {
                 unset($data[$k]);
@@ -65,7 +65,7 @@ class Model
         $keys = [];
         $values = [];
         $token = [];
- 
+
         foreach ($this->data as $k => $v) {
             $keys[] = $k;
             $values[] = $v;
@@ -96,7 +96,8 @@ class Model
         $this->_before_delete();
 
         $sql = "DELETE FROM {$this->tableName} WHERE id = ?";
-        $this->_db->execute([$id]);
+        $stmt = $this->_db->prepare($sql);
+        $stmt->execute([$id]);
 
         $this->_after_delete();
     }
@@ -116,13 +117,13 @@ class Model
         $values = [];
         foreach ($this->data as $k => $v) {
             $set[] = "$k=?";
-            $values = $v;
+            $values[] = $v;
         }
 
         $set = implode(",", $set);
-        $values = $id;
+        $values[] = $id;
 
-        $sql = "UPDATE {$this->tableName} SET $set WHERE $id";
+        $sql = "UPDATE {$this->tableName} SET $set WHERE id = ?";
         $stmt = $this->_db->prepare($sql);
         $stmt->execute($values);
 
@@ -181,7 +182,7 @@ class Model
             unset($_GET['page']);
             $str = "";
 
-            if ($_GET['page']) {
+            if (isset($_GET['page'])) {
                 foreach ($_GET as $k => $v) {
                     $str .= "$k=$v";
                 }
@@ -237,6 +238,7 @@ class Model
         return [
             'data' => $data,
             'page' => $pageStr,
+            'count' => $count,
         ];
 
     }

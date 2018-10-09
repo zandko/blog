@@ -15,7 +15,7 @@
 
 <body>
   <div class="x-body">
-    <form action="/user/insert" method="POST" class="layui-form">
+    <form class="layui-form">
       <div class="layui-form-item">
         <label for="L_email" class="layui-form-label"> <span class="x-red">*</span>邮箱 </label>
         <div class="layui-input-inline">
@@ -46,7 +46,7 @@
       <div class="layui-form-item">
         <label for="L_repass" class="layui-form-label"> </label>
         <!-- <input class="layui-btn" lay-filter="add" lay-submit="" type="submit" value="增加"> -->
-        <input class="layui-btn" lay-filter="*" lay-submit="" type="submit" value="增加">
+        <input class="layui-btn" lay-filter="add" lay-submit="" type="submit" value="增加">
       </div>
     </form>
 
@@ -76,17 +76,31 @@
 
       //监听提交
       form.on('submit(add)', function (data) {
-        console.log(data);
-        //发异步，把数据提交给php
-        layer.alert("增加成功", { icon: 6 }, function () {
-          // 获得frame索引
-          var index = parent.layer.getFrameIndex(window.name);
-          //关闭当前frame
-          parent.layer.close(index);
-        });
+        // console.log(data.field);
+        var user = data.field;
+        $.ajax({
+          type: 'POST',
+          dataType: 'json',
+          url: '/user/insert',
+          data: user,
+          success: function (data) {
+            if (data.status == '200') {
+              //发异步，把数据提交给php
+              layer.alert(data.messages, { icon: 6 }, function () {
+                // 获得frame索引
+                var index = parent.layer.getFrameIndex(window.name);
+                
+                window.parent.location.reload();
+                //关闭当前frame
+                parent.layer.close(index);
+              });
+            } else {
+              layer.alert(data.errors);
+            }
+          }
+        })
         return false;
       });
-
 
     });
   </script>

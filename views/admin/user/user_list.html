@@ -38,7 +38,7 @@
                         <input class="layui-input" placeholder="截止日" id="LAY_demorange_e">
                     </div>
                     <div class="layui-input-inline">
-                        <input type="text" name="username" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+                        <input type="text" name="user_email" placeholder="请输入用户名" autocomplete="off" class="layui-input">
                     </div>
                     <div class="layui-input-inline" style="width:80px">
                         <button class="layui-btn" lay-submit="" lay-filter="sreach"><i class="layui-icon">&#xe615;</i></button>
@@ -48,12 +48,16 @@
         </form>
         <xblock><button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon">&#xe640;</i>批量删除</button><button
                 class="layui-btn" onclick="member_add('添加用户','/user/create','600','500')"><i class="layui-icon">&#xe608;</i>添加</button><span
-                class="x-right" style="line-height:40px">共有数据：88 条</span></xblock>
+                class="x-right" style="line-height:40px">共有数据：
+                <?=$count?> 条</span></xblock>
+
+        <!-- <div class="layui-form"> -->
         <table class="layui-table">
             <thead>
                 <tr>
                     <th>
-                        <input type="checkbox" name="" value="">
+                        <!-- <input type="checkbox" name="" lay-skin="primary" lay-filter="allChoose"> -->
+                        <input type="checkbox" name="all" id="all" onclick="checkAll()" />
                     </th>
                     <th>
                         ID
@@ -97,7 +101,7 @@
                 <?php foreach($data as $v): ?>
                 <tr>
                     <td>
-                        <input type="checkbox" value="1" name="">
+                        <input type="checkbox" value="<?=$v['id']?>" name="noiddel[]">
                     </td>
                     <td>
                         <?=$v['id']?>
@@ -144,15 +148,15 @@
                         <!-- <a style="text-decoration:none" onclick="member_stop(this,'10001')" href="javascript:;" title="停用">
                             <i class="layui-icon">&#xe601;</i>
                         </a> -->
-                        <a title="编辑" href="javascript:;" onclick="member_edit('编辑','/user/edit','4','','510')"
+                        <a title="编辑" href="javascript:;" onclick="member_edit('编辑','/user/edit?id=<?=$v['id']?>','4','','510')"
                             class="ml-5" style="text-decoration:none">
                             <i class="layui-icon">&#xe642;</i>
                         </a>
-                        <a style="text-decoration:none" onclick="member_password('修改密码','member-password.html','10001','600','400')"
+                        <a style="text-decoration:none" onclick="member_password('修改密码','/user/password?id=<?=$v['id']?>','10001','600','400')"
                             href="javascript:;" title="修改密码">
                             <i class="layui-icon">&#xe631;</i>
                         </a>
-                        <a title="删除" href="javascript:;" onclick="member_del(this,'1')" style="text-decoration:none">
+                        <a title="删除" href="javascript:;" onclick="member_del(this,'<?=$v['id']?>')" style="text-decoration:none">
                             <i class="layui-icon">&#xe640;</i>
                         </a>
                     </td>
@@ -160,7 +164,7 @@
                 <?php endforeach; ?>
             </tbody>
         </table>
-
+        <!-- </div> -->
         <?=$page?>
 
         <div style="display:none" id="page"></div>
@@ -168,23 +172,22 @@
     <script src="/lib/layui/layui.js" charset="utf-8"></script>
     <script src="/js/x-layui.js" charset="utf-8"></script>
     <script>
-        layui.use(['laydate', 'element', 'laypage', 'layer'], function () {
+        layui.use(['laydate', 'form', 'element', 'laypage', 'layer'], function () {
             $ = layui.jquery;//jquery
-            laydate = layui.laydate;//日期插件
+            form = layui.form(),
+                laydate = layui.laydate;//日期插件
             lement = layui.element();//面包导航
-            laypage = layui.laypage;//分页
+            // laypage = layui.laypage;//分页
             layer = layui.layer;//弹出层
-
             //以上模块根据需要引入
-
-            laypage({
-                cont: 'page'
-                , pages: 100
-                , first: 1
-                , last: 100
-                , prev: '<em><</em>'
-                , next: '<em>></em>'
-            });
+            // laypage({
+            //     cont: 'page'
+            //     , pages: 100
+            //     , first: 1
+            //     , last: 100
+            //     , prev: '<em><</em>'
+            //     , next: '<em>></em>'
+            // });
 
             var start = {
                 min: laydate.now()
@@ -216,11 +219,47 @@
 
         });
 
+         function checkAll() {
+            var all = document.getElementById('all');//获取到点击全选的那个复选框的id
+            var one = document.getElementsByName('noiddel[]');//获取到复选框的名称
+            if (all.checked == true) {//因为获得的是数组，所以要循环 为每一个checked赋值
+                for (var i = 0; i < one.length; i++) {
+                    one[i].checked = true;
+                }
+
+            } else {
+                for (var j = 0; j < one.length; j++) {
+                    one[j].checked = false;
+                }
+            }
+        }
+
         //批量删除提交
         function delAll() {
             layer.confirm('确认要删除吗？', function (index) {
+
                 //捉到所有被选中的，发异步进行删除
-                layer.msg('删除成功', { icon: 1 });
+                var noList = new Array();
+                $("input:checkbox[name='noiddel[]']:checked").each(function () {
+                    noList.push($(this).val());
+                });
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: '/user/delAll',
+                    data: {
+                        noList: noList
+                    },
+                    success: function (data) {
+                        if (data.status == '200') {
+                            layer.msg(data.messages, { icon: 1 });
+                            window.location.reload();
+                        } else if (data.status == '404') {
+                            layer.msg(data.errors, { icon: 1 });
+                        }
+                    }
+                })
+
             });
         }
         /*用户-添加*/
@@ -263,10 +302,23 @@
         }
         /*用户-删除*/
         function member_del(obj, id) {
+            console.log(id);
             layer.confirm('确认要删除吗？', function (index) {
                 //发异步删除数据
-                $(obj).parents("tr").remove();
-                layer.msg('已删除!', { icon: 1, time: 1000 });
+                $.ajax({
+                    type: 'GET',
+                    dataType: 'json',
+                    url: '/user/delete?id=' + id,
+                    success: function (data) {
+                        if (data.status == '200') {
+                            $(obj).parents("tr").remove();
+                            layer.msg(data.messages, { icon: 1, time: 1000 });
+                            window.location.reload();
+                        }
+
+                    }
+                });
+
             });
         }
     </script>

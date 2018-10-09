@@ -20,12 +20,16 @@ class UserController
         view('admin.user.user_list', $data);
     }
 
+    /**
+     * 个人用户信息
+     */
     public function show()
-    {   
+    {
         $model = new User;
-        $data = $model -> findOne($_GET['id']);
-        view('admin.user.user_show',$data);
+        $data = $model->findOne($_GET['id']);
+        view('admin.user.user_show', $data);
     }
+
     /**
      * 显示数据的添加页
      *
@@ -42,11 +46,25 @@ class UserController
      * @access public
      */
     public function insert()
-    {   
+    {
         $model = new User;
         $model->fill($_POST);
-      
-        echo $model->insert();        
+
+        $ret = $model->create();
+
+        if ($ret != false) {
+            echo json_encode([
+                'status' => '404',
+                'errors' => '添加失败',
+            ]);
+        } else {
+            $model->insert();
+            echo json_encode([
+                'status' => '200',
+                'messages' => '添加成功',
+            ]);
+        }
+
     }
 
     /**
@@ -73,7 +91,11 @@ class UserController
         $model = new User;
         $model->fill($_POST);
         $model->update($_GET['id']);
-        redirect('/admin/user/index');
+
+        echo json_encode([
+            'status' => '200',
+            'messages' => '修改成功!',
+        ]);
     }
 
     /**
@@ -85,6 +107,42 @@ class UserController
     {
         $model = new User;
         $model->delete($_GET['id']);
-        redirect('/admin/user/index');
+        echo json_encode([
+            'status' => '200',
+            'messages' => '删除成功!',
+        ]);
+    }
+
+    /**
+     * 批量删除
+     */
+    public function delAll()
+    {
+        $model = new User;
+        $ret = $model->delAll();
+
+        if ($ret != false) {
+            echo json_encode([
+                'status' => '200',
+                'messages' => '批量删除成功!',
+            ]);
+        } else {
+            echo json_encode([
+                'status' => '404',
+                'errors' => '未选择任何用户!',
+            ]);
+        }
+    }
+
+    /**
+     * 修改用户密码
+     */
+    public function password()
+    {
+        $model = new User;
+        $data = $model->findOne($_GET['id']);
+        view('admin.user.user_password', [
+            'data' => $data,
+        ]);
     }
 }
