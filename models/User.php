@@ -51,6 +51,7 @@ class User extends Model
         echo "注册成功";
     }
 
+
     public function login()
     {
         $redis = Redis::getInstance();
@@ -65,9 +66,9 @@ class User extends Model
         $password = $data['password'];
 
         if (md5($_POST['user_password']) != $password) {
-            echo "密码错误!";
+            return false;
         } else {
-            echo "登录成功!";
+            return true;
         }
 
     }

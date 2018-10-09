@@ -1,11 +1,13 @@
 .navigation {
-  text-align: center;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
 }
 .cd-pagination {
-  width: 90%;
-  max-width: 768px;
+  display: inline-block;
+  vertical-align: middle;
   margin: 2em auto 2em;
-  text-align: center;
+  font-size: 0;
 }
 .cd-pagination li {
   /* 小屏幕上隐藏数字 */
@@ -17,20 +19,32 @@
   display: inline-block;
 }
 .cd-pagination a, .cd-pagination span {
-  display: inline-block;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-  /* 设置按钮大小 */
-  padding: .5em .8em;
-  font-size: 1rem;
+  display: inline-block;
+    vertical-align: middle;
+    padding: 0 15px;
+    border: 1px solid #e2e2e2;
+    height: 28px;
+    line-height: 28px;
+    margin: 0 -1px 5px 0;
+    background-color: #fff;
+    color: #333;
+    font-size: 12px;
 }
 .cd-pagination a {
-  border: 1px solid #e6e6e6;
-  color: #007bc4;/*#424242*/
-  border-radius: 0.25em;
-  text-decoration: none;
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 15px;
+    border: 1px solid #e2e2e2;
+    height: 28px;
+    line-height: 28px;
+    margin: 0 -1px 5px 0;
+    background-color: #fff;
+    color: #333;
+    font-size: 12px;
 }
 
 .no-touch .cd-pagination a:hover {
@@ -53,17 +67,23 @@
   opacity: .4;
 }
 .cd-pagination .button:first-of-type a::before {
-  content: '\00ab  ';
+  content: '\00ab';
 }
 .cd-pagination .button:last-of-type a::after {
-  content: ' \00bb';
+  content: '\00bb';
 }
 .cd-pagination .current {
   /* 当前页码 */
-  background-color: #64a281;
-  border-color: #64a281;
-  color: #ffffff;
-  pointer-events: none;
+  background-color: #2299ee;
+  display: inline-block;
+    vertical-align: middle;
+    padding: 0 15px;
+    border: 1px solid #e2e2e2;
+    height: 28px;
+    line-height: 28px;
+    margin: 0 -1px 5px 0;
+    color: #fff;
+    font-size: 12px;
 }
 @media only screen and (min-width: 768px) {
   .cd-pagination li {

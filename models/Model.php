@@ -5,11 +5,11 @@ namespace models;
 use libs\Db;
 use PDO;
 
-/** 
- * 实例化 Db 类 
- */ 
+/**
+ * 实例化 Db 类
+ */
 class Model
-{   
+{
     protected $_db;
     protected $tableName;
     protected $data;
@@ -19,11 +19,11 @@ class Model
         $this->_db = Db::getInstance();
     }
 
-    /**  
+    /**
      * 钩子函数
-     * 
-     * @access protected 
-     */  
+     *
+     * @access protected
+     */
     protected function _before_write()
     {}
     protected function _after_write()
@@ -32,39 +32,40 @@ class Model
     {}
     protected function _after_delete()
     {}
-    
-    /**  
-     * 设置白名单 
-     * 
-     * @access protected 
+
+    /**
+     * 设置白名单
+     *
+     * @access public
      * @param mixed $data 表单数据
-     * @return array 
-     */  
-    protected function fill($data)
-    {
+     * @return array
+     */
+    
+    public function fill($data)
+    {   
         foreach ($data as $k => $v) {
-            if (!in_array($data, $this->fillable)) {
+            if (!in_array($k, $this->fillable)) {
                 unset($data[$k]);
             }
         }
 
         return $this->data = $data;
     }
-    
-    /**  
-     * 操作数据库的添加方法 
-     * 
-     * @access protected 
-     * @return int 
-     */  
-    protected function insert()
+
+    /**
+     * 操作数据库的添加方法
+     *
+     * @access public
+     * @return int
+     */
+    public function insert()
     {
         $this->_before_write();
 
         $keys = [];
         $values = [];
         $token = [];
-
+ 
         foreach ($this->data as $k => $v) {
             $keys[] = $k;
             $values[] = $v;
@@ -73,24 +74,24 @@ class Model
 
         $keys = implode(",", $keys);
         $token = implode(",", $token);
-        $sql = "INSERT INTO {$this->tableName}() VALUES($token)";
+        $sql = "INSERT INTO {$this->tableName}($keys) VALUES($token)";
 
         $stmt = $this->_db->prepare($sql);
         $stmt->execute($values);
 
-        return $this->_db->lastInsertId();
+        $this->data['id'] = $this->_db->lastInsertId();
 
         $this->_after_write();
     }
 
-    /**  
-     * 操作数据库的删除方法 
-     * 
-     * @access protected 
+    /**
+     * 操作数据库的删除方法
+     *
+     * @access public
      * @param mixed $id 条件
      * @return 无
-     */  
-    protected function delete($id)
+     */
+    public function delete($id)
     {
         $this->_before_delete();
 
@@ -100,14 +101,14 @@ class Model
         $this->_after_delete();
     }
 
-    /**  
-     * 操作数据库的修改方法 
-     * 
-     * @access protected 
+    /**
+     * 操作数据库的修改方法
+     *
+     * @access public
      * @param mixed $id 条件
      * @return 无
-     */  
-    protected function update($id)
+     */
+    public function update($id)
     {
         $this->_before_write();
 
@@ -128,14 +129,14 @@ class Model
         $this->_after_delete();
     }
 
-    /**  
+    /**
      * 查询所有数据-带分页功能
-     * 
-     * @access protected 
+     *
+     * @access public
      * @param mixed $option 要查询的数据 条件 排序 每页显示的数量
      * @return [array,string]
-     */  
-    protected function findAll($option)
+     */
+    public function findAll($option = [])
     {
         $_option = [
             'fields' => '*',
@@ -152,7 +153,11 @@ class Model
         $page = isset($_GET['page']) ? max(1, (int) $_GET['page']) : 1;
         $offset = ($page - 1) * $_option['per_page'];
 
-        $sql = "SELECT * FROM {$this->tableName} WHERE {$_option['fields']}  ORDER BY {$_option['order_by']} {$_option['order_way']}  LIMIT $offset,{$_option['per_page']}";
+        $sql = "SELECT {$_option['fields']}
+                    FROM {$this->tableName}
+                        WHERE {$_option['where']}
+                        ORDER BY {$_option['order_by']} {$_option['order_way']}
+                        LIMIT $offset,{$_option['per_page']}";
 
         $stmt = $this->_db->prepare($sql);
         $stmt->execute();
@@ -236,14 +241,14 @@ class Model
 
     }
 
-    /**  
+    /**
      * 查询单条数据
-     * 
-     * @access protected 
+     *
+     * @access public
      * @param mixed $id 条件
      * @return [array]
-     */  
-    protected function findOne($id)
+     */
+    public function findOne($id)
     {
         $stmt = $this->_db->prepare("SELECT * FROM {$this->tableName} WHERE id=?");
         $stmt->execute([$id]);

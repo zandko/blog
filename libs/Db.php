@@ -15,11 +15,13 @@ class Db
     private function __construct()
     {   
         try{
-            $config = config('mysql');
-            $this->pdo = new PDO("mysql:host={$config['host']};dbname={$config['dbname']}", $config['root'], $config['password']);
-            $this->pdo->exec("SET NAMES {$config['charset']}");
+            $config = config('db');
+            $this->pdo = new PDO('mysql:host=' . $config['host'] . ';dbname=' . $config['dbname'], $config['user'], $config['password']);
+            $this->pdo->exec("SET NAMES " . $config['charset']);
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         }catch(PDOException $e) {
             $this->error = $e->getMessage();
+            echo $this->error;
         }
         
     }

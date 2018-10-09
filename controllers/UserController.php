@@ -6,16 +6,6 @@ use models\User;
 
 class UserController
 {
-    public function register()
-    {
-        view('front.login');
-    }
-
-    public function login()
-    {
-        $model = new User;
-        $model->login();
-    }
     /**
      * 显示数据列表页
      *
@@ -24,10 +14,18 @@ class UserController
     public function index()
     {
         $model = new User;
-        $data = $model->findAll();
-        view('admin.user.index', $data);
+        $data = $model->findAll([
+            'per_page' => 8,
+        ]);
+        view('admin.user.user_list', $data);
     }
 
+    public function show()
+    {   
+        $model = new User;
+        $data = $model -> findOne($_GET['id']);
+        view('admin.user.user_show',$data);
+    }
     /**
      * 显示数据的添加页
      *
@@ -35,7 +33,7 @@ class UserController
      */
     public function create()
     {
-        view('admin.user.create');
+        view('admin.user.user_add');
     }
 
     /**
@@ -44,13 +42,11 @@ class UserController
      * @access public
      */
     public function insert()
-    {
+    {   
         $model = new User;
-        $model->register();
-        die;
         $model->fill($_POST);
-        $model->insert();
-        redirect('/admin/user/index');
+      
+        echo $model->insert();        
     }
 
     /**
@@ -62,7 +58,7 @@ class UserController
     {
         $model = new User;
         $data = $model->findOne($_GET['id']);
-        view('admin.user.edit', [
+        view('admin.user.user_edit', [
             'data' => $data,
         ]);
     }

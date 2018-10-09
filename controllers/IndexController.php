@@ -11,7 +11,7 @@ class IndexController
         view('front.index');
     }
 
-    public function andmin()
+    public function admin()
     {
         view('admin.index.index');
     }

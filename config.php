@@ -7,10 +7,10 @@ return [
         'host' => '127.0.0.1',
         'port' => 6379,
     ],
-    'mysql' => [
+    'db' => [
         'host' => '127.0.0.1',
         'dbname' => 'zane_blog',
-        'root' => 'root',
+        'user' => 'root',
         'password' => '123456',
         'charset' => 'utf8',
     ],

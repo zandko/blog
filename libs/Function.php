@@ -44,7 +44,7 @@ function view($file, $data = [])
 function config($name)
 {
     static $config = null;
-    if ($config === "") {
+    if ($config == null) {
         $config = require ROOT . 'config.php';
     }
     return $config[$name];
