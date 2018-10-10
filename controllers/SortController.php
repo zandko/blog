@@ -1,10 +1,11 @@
-<?php 
+<?php
 
 namespace controllers;
 
 use models\Sort;
 
-class SortController{
+class SortController
+{
     /**
      * 显示数据列表页
      *
@@ -13,8 +14,22 @@ class SortController{
     public function index()
     {
         $model = new Sort;
-        $data = $model->findAll();
-        view('admin.sort.index',$data);
+        $data = $model->findAll([
+            'order_by' => 'concat(path,id,"-")',
+            'order_way' => 'asc',
+            'per_page' => 100,
+        ]);
+
+        view('admin.sorts.sort_list', $data);
+    }
+
+    public function ajax_get_cat()
+    {
+        $id = (int) $_GET['id'];
+        $model = new Sort;
+        $data = $model->getCat($id);
+
+        echo json_encode($data);
     }
 
     /**
@@ -49,7 +64,7 @@ class SortController{
     {
         $model = new Sort;
         $data = $model->findOne($_GET['id']);
-        view('admin.sort.edit',[
+        view('admin.sorts.sort_edit', [
             'data' => $data,
         ]);
     }
@@ -59,23 +74,23 @@ class SortController{
      *
      * @access public
      */
-     public function update()
-     {
-         $model = new Sort;
-         $model->fill($_POST);
-         $model->update($_GET['id']);
-         redirect('/admin/sort/index');
-     }
+    public function update()
+    {
+        $model = new Sort;
+        $model->fill($_POST);
+        $model->update($_GET['id']);
+        redirect('/admin/sort/index');
+    }
 
     /**
      * 处理要删除的数据
      *
      * @access public
      */
-     public function delete()
-     {
-         $model = new Sort;
-         $model->delete($_GET['id']);
-         redirect('/admin/sort/index');
-     }
+    public function delete()
+    {
+        $model = new Sort;
+        $model->delete($_GET['id']);
+        redirect('/admin/sort/index');
+    }
 }

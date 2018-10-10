@@ -164,7 +164,11 @@ class Model
         $stmt->execute();
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $sql = "SELECT COUNT(*) FROM {$this->tableName}";
+        $sql = "SELECT COUNT(*)
+                    FROM {$this->tableName}
+                        WHERE {$_option['where']}
+                        ORDER BY {$_option['order_by']} {$_option['order_way']}
+                        LIMIT $offset,{$_option['per_page']}";
         $stmt = $this->_db->prepare($sql);
         $stmt->execute();
         $count = $stmt->fetch(PDO::FETCH_COLUMN);
@@ -182,9 +186,9 @@ class Model
             unset($_GET['page']);
             $str = "";
 
-            if (isset($_GET['page'])) {
+            if (!isset($_GET['page'])) {
                 foreach ($_GET as $k => $v) {
-                    $str .= "$k=$v";
+                    $str .= "$k=$v&";
                 }
             }
 

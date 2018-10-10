@@ -5,7 +5,11 @@ namespace controllers;
 use models\Article;
 
 class ArticleController
-{
+{   
+    public function info()
+    {
+        view('front.info');
+    }
     /**
      * 显示数据列表页
      *

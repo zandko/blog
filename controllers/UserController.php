@@ -14,10 +14,21 @@ class UserController
     public function index()
     {
         $model = new User;
+        $where = '1';
+        if (isset($_GET['keyword']) && $_GET['keyword']) {
+            $where .= " AND user_email LIKE '%{$_GET['keyword']}%' ";
+        }
+        if (isset($_GET['start']) && $_GET['start']) {
+            $where .= " AND user_created_at >= '{$_GET['start']}' ";
+        }
+        if (isset($_GET['end']) && $_GET['end']) {
+            $where .= " AND user_created_at <= '{$_GET['end']}' ";
+        }
         $data = $model->findAll([
             'per_page' => 8,
+            'where' => $where,
         ]);
-        view('admin.user.user_list', $data);
+        view('admin.users.user_list', $data);
     }
 
     /**
@@ -27,7 +38,7 @@ class UserController
     {
         $model = new User;
         $data = $model->findOne($_GET['id']);
-        view('admin.user.user_show', $data);
+        view('admin.users.user_show', $data);
     }
 
     /**
@@ -37,7 +48,7 @@ class UserController
      */
     public function create()
     {
-        view('admin.user.user_add');
+        view('admin.users.user_add');
     }
 
     /**
@@ -76,7 +87,7 @@ class UserController
     {
         $model = new User;
         $data = $model->findOne($_GET['id']);
-        view('admin.user.user_edit', [
+        view('admin.users.user_edit', [
             'data' => $data,
         ]);
     }
@@ -141,8 +152,33 @@ class UserController
     {
         $model = new User;
         $data = $model->findOne($_GET['id']);
-        view('admin.user.user_password', [
+        view('admin.users.user_password', [
             'data' => $data,
         ]);
     }
+
+    /**
+     * 等级管理
+     */
+    public function level()
+    {
+        view('admin.users.user_level');
+    }
+
+    /**
+     * 积分管理
+     */
+    public function kiss()
+    {
+        view('admin.users.user_kiss');
+    }
+
+    /**
+     * 浏览记录
+     */
+    public function view()
+    {
+        view('admin.users.user_view');
+    }
+    
 }

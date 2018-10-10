@@ -2,8 +2,6 @@
 
 namespace controllers;
 
-use libs\Template;
-
 class IndexController
 {
     public function index()
@@ -11,8 +9,9 @@ class IndexController
         view('front.index');
     }
 
-    public function admin()
+    public function about()
     {
-        view('admin.index.index');
+        view('front.about');
     }
+
 }

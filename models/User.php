@@ -44,10 +44,9 @@ class User extends Model
         }else {
             return false;
         }
-
-        
-        
     }
+
+   
 
     public function register()
     {
