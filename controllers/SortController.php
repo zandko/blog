@@ -33,16 +33,6 @@ class SortController
     }
 
     /**
-     * 显示数据的添加页
-     *
-     * @access public
-     */
-    public function create()
-    {
-        view('admin.sort.create');
-    }
-
-    /**
      * 处理要添加的数据
      *
      * @access public
@@ -52,7 +42,12 @@ class SortController
         $model = new Sort;
         $model->fill($_POST);
         $model->insert();
-        redirect('/admin/sort/index');
+
+        $db = \libs\Db::getInstance();
+        $id = $db->lastInsertId();
+
+        $data = $model->findOne($id);
+        echo json_encode($data);
     }
 
     /**
@@ -63,9 +58,17 @@ class SortController
     public function edit()
     {
         $model = new Sort;
+
         $data = $model->findOne($_GET['id']);
+
+        $dataAll = $model->findAll([
+            'order_by' => 'concat(path,id,"-")',
+            'order_way' => 'asc',
+        ]);
+
         view('admin.sorts.sort_edit', [
             'data' => $data,
+            'dataAll' => $dataAll,
         ]);
     }
 
@@ -79,7 +82,11 @@ class SortController
         $model = new Sort;
         $model->fill($_POST);
         $model->update($_GET['id']);
-        redirect('/admin/sort/index');
+
+        echo json_encode([
+            'status' => '200',
+            'messages' => '添加成功!',
+        ]);
     }
 
     /**
@@ -91,6 +98,9 @@ class SortController
     {
         $model = new Sort;
         $model->delete($_GET['id']);
-        redirect('/admin/sort/index');
+        echo json_encode([
+            'status' => '200',
+            'messages' => '删除成功!',
+        ]);
     }
 }

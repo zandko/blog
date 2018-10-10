@@ -9,7 +9,7 @@ class Sort extends Model
      * $protected $fillable  白名单
      */
     protected $tableName = 'sorts';
-    protected $fillable = ['sort_name', 'sort_description', 'parent_sort_id'];
+    protected $fillable = ['sort_name', 'path', 'parent_sort_id'];
 
     public function getCat($parent_id = 0)
     {
