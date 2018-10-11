@@ -127,7 +127,7 @@ class Model
         $stmt = $this->_db->prepare($sql);
         $stmt->execute($values);
 
-        $this->_after_delete();
+        $this->_after_write();
     }
 
     /**
@@ -258,6 +258,34 @@ class Model
         $stmt = $this->_db->prepare("SELECT * FROM {$this->tableName} WHERE id=?");
         $stmt->execute([$id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function tree()
+    {
+        $data = $this->findAll([
+            'per_page' => 9999,
+        ]);
+        // 递归重新排序
+        $ret = $this->_tree($data['data']);
+        return $ret;
+    }
+
+    protected function _tree($data, $parent_id = 0, $level = 0)
+    {
+        // 定义一个数组保存排序好之后的数据
+        static $_ret = [];
+        foreach ($data as $v) {
+            if ($v['parent_id'] == $parent_id) {
+                // 标签它的级别
+                $v['level'] = $level;
+                // 挪到排序之后的数组中
+                $_ret[] = $v;
+                // 找 $v 的子分类
+                $this->_tree($data, $v['id'], $level + 1);
+            }
+        }
+        // 返回排序好的数组
+        return $_ret;
     }
 
 }

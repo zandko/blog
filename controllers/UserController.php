@@ -14,7 +14,7 @@ class UserController
     public function index()
     {
         $model = new User;
-        $where = '1';
+        $where = '1';   
         if (isset($_GET['keyword']) && $_GET['keyword']) {
             $where .= " AND user_email LIKE '%{$_GET['keyword']}%' ";
         }
@@ -25,7 +25,7 @@ class UserController
             $where .= " AND user_created_at <= '{$_GET['end']}' ";
         }
         $data = $model->findAll([
-            'per_page' => 8,
+            'per_page' => 7,
             'where' => $where,
         ]);
         view('admin.users.user_list', $data);
@@ -66,7 +66,7 @@ class UserController
         if ($ret != false) {
             echo json_encode([
                 'status' => '404',
-                'errors' => '添加失败',
+                'errors' => '邮箱重复',
             ]);
         } else {
             $model->insert();

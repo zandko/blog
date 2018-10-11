@@ -2,6 +2,7 @@
 
 namespace controllers;
 
+use models\Privilege;
 use models\Role;
 
 class RoleController
@@ -30,7 +31,10 @@ class RoleController
      */
     public function create()
     {
-        view('admin.istrators.role_add');
+        $model = new Privilege;
+        $data = $model->tree();
+
+        view('admin.istrators.role_add', $data);
     }
 
     /**
@@ -43,7 +47,12 @@ class RoleController
         $model = new Role;
         $model->fill($_POST);
         $model->insert();
-        redirect('/admin/role/index');
+
+        echo json_encode([
+            'status' => '200',
+            'messages' => '添加成功!',
+        ]);
+        
     }
 
     /**
@@ -55,8 +64,16 @@ class RoleController
     {
         $model = new Role;
         $data = $model->findOne($_GET['id']);
-        view('admin.role.edit', [
+
+        $PriModel = new Privilege;
+        $PriData = $PriModel->tree();
+
+        $priIds = $model->getPriIds($_GET['id']);
+        
+        view('admin.istrators.role_edit', [
             'data' => $data,
+            'PriData' => $PriData,
+            'priIds' => $priIds,
         ]);
     }
 
@@ -70,7 +87,11 @@ class RoleController
         $model = new Role;
         $model->fill($_POST);
         $model->update($_GET['id']);
-        redirect('/admin/role/index');
+        
+        echo json_encode([
+            'status' => '200',
+            'messages' => '修改成功!',
+        ]);
     }
 
     /**
@@ -82,6 +103,10 @@ class RoleController
     {
         $model = new Role;
         $model->delete($_GET['id']);
-        redirect('/admin/role/index');
+        
+        echo json_encode([
+            'status' => '200',
+            'messages' => '已删除!',
+        ]);
     }
 }

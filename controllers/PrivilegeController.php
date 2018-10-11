@@ -13,26 +13,9 @@ class PrivilegeController{
     public function index()
     {
         $model = new Privilege;
-        $data = $model->findAll([
-            'per_page' => 12,
-        ]);    
+        $data = $model->tree();     
       
         view('admin.istrators.privilege_rule',$data);
-    }
-
-    public function cate()
-    {
-        view('admin.istrators.privilege_cate');
-    }
-
-    /**
-     * 显示数据的添加页
-     *
-     * @access public
-     */
-    public function create()
-    {
-        view('admin.privilege.create');
     }
 
     /**
@@ -45,7 +28,12 @@ class PrivilegeController{
         $model = new Privilege;
         $model->fill($_POST);
         $model->insert();
-        redirect('/admin/privilege/index');
+
+        echo json_encode([
+            'data' => $_POST,
+            'status' => '200',
+            'messages' => '添加成功!',
+        ]);
     }
 
     /**
@@ -57,8 +45,10 @@ class PrivilegeController{
     {
         $model = new Privilege;
         $data = $model->findOne($_GET['id']);
-        view('admin.privilege.edit',[
+        $dataAll = $model->tree();
+        view('admin.istrators.privilege_edit',[
             'data' => $data,
+            'dataAll' => $dataAll, 
         ]);
     }
 
@@ -72,7 +62,11 @@ class PrivilegeController{
          $model = new Privilege;
          $model->fill($_POST);
          $model->update($_GET['id']);
-         redirect('/admin/privilege/index');
+
+         echo json_encode([
+            'status' => '200',
+            'messages' => '修改成功!',
+         ]);
      }
 
     /**
@@ -83,7 +77,11 @@ class PrivilegeController{
      public function delete()
      {
          $model = new Privilege;
-         $model->delete($_GET['id']);
-         redirect('/admin/privilege/index');
+         $model->delete($_POST['id']);
+
+         echo json_encode([
+             'status' => '200',
+             'messages' => '已删除!',
+         ]);
      }
 }
