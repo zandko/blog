@@ -11,7 +11,8 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
-        <link rel="stylesheet" href="./css/x-admin.css" media="all">
+        <link rel="stylesheet" href="/css/page.css">
+        <link rel="stylesheet" href="/css/x-admin.css" media="all">
     </head>
     <body>
         <div class="x-nav">
@@ -46,7 +47,7 @@
                   </div>
                 </div> 
             </form>
-            <xblock><button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon">&#xe640;</i>批量删除</button><span class="x-right" style="line-height:40px">共有数据：88 条</span></xblock>
+            <xblock><button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon">&#xe640;</i>批量删除</button><span class="x-right" style="line-height:40px">共有数据：<?=$count?> 条</span></xblock>
             <table class="layui-table">
                 <thead>
                     <tr>
@@ -57,10 +58,10 @@
                             ID
                         </th>
                         <th>
-                            权限规则
+                            权限名称
                         </th>
                         <th>
-                            权限名称
+                            权限规则
                         </th>
                         <th>
                             所属分类
@@ -71,21 +72,26 @@
                     </tr>
                 </thead>
                 <tbody id="x-link">
+                    <?php foreach($data as $v): ?>
                     <tr>
                         <td>
                             <input type="checkbox" value="1" name="">
                         </td>
                         <td>
-                            1
+                            <?=$v['id']?>
                         </td>
                         <td>
-                            admin/user/userlist
+                            <?=$v['privilege_name']?>
                         </td>
                         <td>
-                            会员列表
+                            <?=$v['url_path']?>
                         </td>
                         <td>
-                            会员相关
+                            <?php foreach($data as $v1): ?>
+                                <?php if($v['parent_id'] == $v1['id']): ?>
+                                    <?=$v1['privilege_name']?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
                         </td>
                         <td class="td-manage">
                             <a title="编辑" href="javascript:;" onclick="rule_edit('编辑','rule-edit.html','4','','510')"
@@ -98,13 +104,14 @@
                             </a>
                         </td>
                     </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
 
-            <div id="page"></div>
+            <?=$page?>
         </div>
-        <script src="./lib/layui/layui.js" charset="utf-8"></script>
-        <script src="./js/x-layui.js" charset="utf-8"></script>
+        <script src="/lib/layui/layui.js" charset="utf-8"></script>
+        <script src="/js/x-layui.js" charset="utf-8"></script>
         <script>
             layui.use(['element','laypage','layer','form'], function(){
                 $ = layui.jquery;//jquery

@@ -2,33 +2,27 @@
 
 namespace controllers;
 
-use models\Admin;
+use models\Privilege;
 
-class AdminController{
+class PrivilegeController{
     /**
-     * 显示首页
+     * 显示数据列表页
      *
      * @access public
      */
     public function index()
     {
-        view('admin.index.index');
+        $model = new Privilege;
+        $data = $model->findAll([
+            'per_page' => 12,
+        ]);    
+      
+        view('admin.istrators.privilege_rule',$data);
     }
 
-
-    public function welcome()
+    public function cate()
     {
-        view('admin.index.welcome');
-    }
-
-    /**
-     * 显示数据列表页
-     */
-    public function list()
-    {
-        $model = new Admin;
-        $data = $model->findAll();
-        view('admin.istrators.admin_list',$data);
+        view('admin.istrators.privilege_cate');
     }
 
     /**
@@ -38,7 +32,7 @@ class AdminController{
      */
     public function create()
     {
-        view('admin.admin.create');
+        view('admin.privilege.create');
     }
 
     /**
@@ -48,10 +42,10 @@ class AdminController{
      */
     public function insert()
     {
-        $model = new Admin;
+        $model = new Privilege;
         $model->fill($_POST);
         $model->insert();
-        redirect('/admin/admin/index');
+        redirect('/admin/privilege/index');
     }
 
     /**
@@ -61,9 +55,9 @@ class AdminController{
      */
     public function edit()
     {
-        $model = new Admin;
+        $model = new Privilege;
         $data = $model->findOne($_GET['id']);
-        view('admin.admin.edit',[
+        view('admin.privilege.edit',[
             'data' => $data,
         ]);
     }
@@ -75,10 +69,10 @@ class AdminController{
      */
      public function update()
      {
-         $model = new Admin;
+         $model = new Privilege;
          $model->fill($_POST);
          $model->update($_GET['id']);
-         redirect('/admin/admin/index');
+         redirect('/admin/privilege/index');
      }
 
     /**
@@ -88,8 +82,8 @@ class AdminController{
      */
      public function delete()
      {
-         $model = new Admin;
+         $model = new Privilege;
          $model->delete($_GET['id']);
-         redirect('/admin/admin/index');
+         redirect('/admin/privilege/index');
      }
 }

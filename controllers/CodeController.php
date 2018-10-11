@@ -10,10 +10,10 @@ class CodeController
     public function make()
     {
         $table = $_GET['name'];
-        $tableName = substr($_GET['name'], 0, strrchr($_GET['name'], 's'));
+        // $tableName = substr($_GET['name'], 0, strrchr($_GET['name'], 's'));
+        $tableName = $_GET['name'];
 
-        var_dump($tableName);
-        die;
+     
         $db = Db::getInstance();
 
         $stmt = $db->prepare("SHOW FULL FIELDS FROM $table");

@@ -145,6 +145,8 @@ class Model
             'order_by' => 'id',
             'order_way' => 'DESC',
             'per_page' => 20,
+            'join' => '',
+            'groupby' => '',
         ];
 
         if ($option) {
@@ -155,8 +157,8 @@ class Model
         $offset = ($page - 1) * $_option['per_page'];
 
         $sql = "SELECT {$_option['fields']}
-                    FROM {$this->tableName}
-                        WHERE {$_option['where']}
+                    FROM {$this->tableName} {$_option['join']}
+                        WHERE {$_option['where']} {$_option['groupby']}
                         ORDER BY {$_option['order_by']} {$_option['order_way']}
                         LIMIT $offset,{$_option['per_page']}";
 
@@ -166,9 +168,7 @@ class Model
 
         $sql = "SELECT COUNT(*)
                     FROM {$this->tableName}
-                        WHERE {$_option['where']}
-                        ORDER BY {$_option['order_by']} {$_option['order_way']}
-                        LIMIT $offset,{$_option['per_page']}";
+                        WHERE {$_option['where']}";
         $stmt = $this->_db->prepare($sql);
         $stmt->execute();
         $count = $stmt->fetch(PDO::FETCH_COLUMN);
@@ -185,7 +185,6 @@ class Model
 
             unset($_GET['page']);
             $str = "";
-
             if (!isset($_GET['page'])) {
                 foreach ($_GET as $k => $v) {
                     $str .= "$k=$v&";
@@ -193,7 +192,7 @@ class Model
             }
 
             if ($page != 1) {
-                $pageStr .= "<li  class='button'><a href='?{$str}page={$prev}'></a></li>";
+                $pageStr .= "<li class='button'><a href='?{$str}page={$prev}'></a></li>";
             }
 
             $start = 1;

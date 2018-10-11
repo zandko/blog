@@ -11,7 +11,7 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="format-detection" content="telephone=no">
-        <link rel="stylesheet" href="./css/x-admin.css" media="all">
+        <link rel="stylesheet" href="/css/x-admin.css" media="all">
     </head>
     <body>
         <div class="x-nav">
@@ -24,13 +24,11 @@
         </div>
         <div class="x-body">
             
-            <xblock><button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon">&#xe640;</i>批量删除</button><button class="layui-btn" onclick="role_add('添加用户','role-add.html','900','500')"><i class="layui-icon">&#xe608;</i>添加</button><span class="x-right" style="line-height:40px">共有数据：88 条</span></xblock>
+            <xblock><button class="layui-btn" onclick="role_add('添加用户','/role/create','900','500')"><i class="layui-icon">&#xe608;</i>添加</button><span class="x-right" style="line-height:40px">共有数据：<?=$count?> 条</span></xblock>
             <table class="layui-table">
                 <thead>
                     <tr>
-                        <th>
-                            <input type="checkbox" name="" value="">
-                        </th>
+                        
                         <th>
                             ID
                         </th>
@@ -40,31 +38,33 @@
                         <th>
                             拥有权限规则
                         </th>
-                        <th>
+                        <!-- <th>
                             描述
-                        </th>
+                        </th> -->
                         <th>
                             操作
                         </th>
                     </tr>
                 </thead>
                 <tbody>
+                    <?php foreach($data as $v): ?>
                     <tr>
                         <td>
-                            <input type="checkbox" value="1" name="">
+                            <?=$v['id']?>
                         </td>
                         <td>
-                            1
-                        </td>
-                        <td>
-                            超级管理员
+                            <?=$v['role_name']?>
                         </td>
                         <td >
-                            会员列表，问题列表
+                            <?php if($v['id']=='1'):?>
+                                拥有至高无上的权力
+                            <?php else: ?>
+                                <?=$v['list']?>
+                            <?php endif; ?>
                         </td>
-                        <td >
+                        <!-- <td >
                             具有至高无上的权利
-                        </td>
+                        </td> -->
                         <td class="td-manage">
                             <a title="编辑" href="javascript:;" onclick="role_edit('编辑','role-edit.html','4','','510')"
                             class="ml-5" style="text-decoration:none">
@@ -76,13 +76,14 @@
                             </a>
                         </td>
                     </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
 
             <div id="page"></div>
         </div>
-        <script src="./lib/layui/layui.js" charset="utf-8"></script>
-        <script src="./js/x-layui.js" charset="utf-8"></script>
+        <script src="/lib/layui/layui.js" charset="utf-8"></script>
+        <script src="/js/x-layui.js" charset="utf-8"></script>
         <script>
             layui.use(['laydate','element','laypage','layer'], function(){
                 $ = layui.jquery;//jquery
