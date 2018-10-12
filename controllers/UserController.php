@@ -4,7 +4,7 @@ namespace controllers;
 
 use models\User;
 
-class UserController
+class UserController extends BaseController
 {
     /**
      * 显示数据列表页

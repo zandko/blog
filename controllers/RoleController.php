@@ -5,7 +5,7 @@ namespace controllers;
 use models\Privilege;
 use models\Role;
 
-class RoleController
+class RoleController extends BaseController
 {
     /**
      * 显示数据列表页

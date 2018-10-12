@@ -5,7 +5,7 @@ namespace controllers;
 use models\Admin;
 use models\Role;
 
-class AdminController
+class AdminController extends BaseController
 {
     /**
      * 显示首页
@@ -13,8 +13,10 @@ class AdminController
      * @access public
      */
     public function index()
-    {
-        view('admin.index.index');
+    {   
+        $model = new Admin;
+        $data = $model->findOne($_SESSION['id']);
+        view('admin.index.index',$data);
     }
 
     public function welcome()

@@ -4,7 +4,8 @@ namespace controllers;
 
 use models\Label;
 
-class LabelController{
+class LabelController extends BaseController
+{
     /**
      * 显示数据列表页
      *

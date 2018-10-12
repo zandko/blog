@@ -52,4 +52,60 @@ class Admin extends Model
             $id,
         ]);
     }
+
+    public function login($username, $password)
+    {
+        $stmt = $this->_db->prepare("SELECT * FROM admin WHERE username=? AND password=?");
+        $stmt->execute([
+            $username,
+            $password,
+        ]);
+        $adminUser = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($adminUser) {
+            $_SESSION['id'] = $adminUser['id'];
+            $_SESSION['username'] = $adminUser['username'];
+
+            $stmt = $this->_db->prepare("SELECT COUNT(*) FROM admin_role WHERE role_id = 1 AND admin_id = ?");
+            $stmt->execute([
+                $_SESSION['id'],
+            ]);
+
+            $root = $stmt->fetch(\PDO::FETCH_COLUMN);
+            if ($root > 0) {
+                $_SESSION['root'] = true;
+            } else {
+                $_SESSION['url_path'] = $this->getUrlPath($_SESSION['id']);
+            }
+            return $adminUser;
+        } else {
+            return false;
+        }
+    }
+
+    public function getUrlPath($adminId)
+    {
+        $stmt = $this->_db->prepare("SELECT c.url_path
+                                FROM admin_role a
+                                LEFT JOIN role_privilege b ON a.role_id = b.role_id
+                                LEFT JOIN privilege c ON b.pri_id = c.id
+                                WHERE a.admin_id=? AND c.url_path != ''");
+        $stmt->execute([
+            $adminId,
+        ]);
+
+        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $_ret = [];
+
+        foreach ($data as $v) {
+            if (false === strpos($v['url_path'], ',')) {
+                $_ret[] = $v['url_path'];
+            } else {
+                $_tt = explode(',', $v['url_path']);
+                $_ret[] = array_merge($_ret, $_tt);
+            }
+        }
+
+        return $_ret;
+    }
 }

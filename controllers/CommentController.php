@@ -4,7 +4,8 @@ namespace controllers;
 
 use models\Comment;
 
-class CommentController{
+class CommentController extends BaseController
+{
     /**
      * 显示数据列表页
      *

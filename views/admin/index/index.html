@@ -34,12 +34,12 @@
           </li>
           <li class="layui-nav-item"><img src="/images/logo.png" class="layui-circle" style="border: 2px solid #A9B7B7;"
               width="35px" alt=""></li>
-          <li class="layui-nav-item"> <a href="javascript:;">admin</a>
+          <li class="layui-nav-item"> <a href="javascript:;"><?=$data['username']?></a>
             <dl class="layui-nav-child">
               <!-- 二级菜单 -->
               <dd><a href="">个人信息</a></dd>
               <dd><a href="">切换帐号</a></dd>
-              <dd><a href="/user/a_login">退出</a></dd>
+              <dd><a href="/login/logout">退出</a></dd>
             </dl>
           </li>
           <li class="layui-nav-item x-index"><a href="/">前台首页</a></li>
@@ -53,7 +53,7 @@
             </a>
             <dl class="layui-nav-child">
               <dd class="">
-              <dd class=""> <a href="javascript:;" _href="/test/article_list"> <cite>博文列表</cite> </a> </dd>
+              <dd class=""> <a href="javascript:;" _href="/article/index"> <cite>博文列表</cite> </a> </dd>
               </dd>
             </dl>
           </li>

@@ -4,7 +4,8 @@ namespace controllers;
 
 use models\Privilege;
 
-class PrivilegeController{
+class PrivilegeController extends BaseController
+{
     /**
      * 显示数据列表页
      *

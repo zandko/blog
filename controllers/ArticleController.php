@@ -4,12 +4,9 @@ namespace controllers;
 
 use models\Article;
 
-class ArticleController
+class ArticleController extends BaseController
 {   
-    public function info()
-    {
-        view('front.info');
-    }
+
     /**
      * 显示数据列表页
      *
@@ -19,7 +16,7 @@ class ArticleController
     {
         $model = new Article;
         $data = $model->findAll();
-        view('admin.article.index', $data);
+        view('admin.articles.article_list', $data);
     }
 
     /**
@@ -29,7 +26,7 @@ class ArticleController
      */
     public function create()
     {
-        view('admin.article.create');
+        view('admin.article.article_create');
     }
 
     /**
@@ -42,7 +39,6 @@ class ArticleController
         $model = new Article;
         $model->fill($_POST);
         $model->insert();
-        redirect('/admin/article/index');
     }
 
     /**
@@ -54,7 +50,7 @@ class ArticleController
     {
         $model = new Article;
         $data = $model->findOne($_GET['id']);
-        view('admin.article.edit', [
+        view('admin.article.article_edit', [
             'data' => $data,
         ]);
     }
@@ -69,7 +65,6 @@ class ArticleController
         $model = new Article;
         $model->fill($_POST);
         $model->update($_GET['id']);
-        redirect('/admin/article/index');
     }
 
     /**
@@ -81,6 +76,5 @@ class ArticleController
     {
         $model = new Article;
         $model->delete($_GET['id']);
-        redirect('/admin/article/index');
     }
 }

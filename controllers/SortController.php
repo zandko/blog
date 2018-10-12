@@ -4,7 +4,7 @@ namespace controllers;
 
 use models\Sort;
 
-class SortController
+class SortController extends BaseController
 {
     /**
      * 显示数据列表页
