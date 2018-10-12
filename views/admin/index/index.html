@@ -25,7 +25,19 @@
           </div>
         </div>
 
-
+        <ul class="layui-nav layui-layout-left layui-ygyd-menu" style="position:absolute; left:250px;">
+            <li class="layui-nav-item"><a href="">合作机构</a></li>
+            <li class="layui-nav-item"><a href="javascript:;">订单管理</a></li>
+            <li class="layui-nav-item"><a href="">统计报表</a></li>
+            <li class="layui-nav-item">
+              <a href="javascript:;">系统管理</a>
+              <dl class="layui-nav-child">
+                <dd><a href="">角色管理</a></dd>
+                <dd><a href="">权限设置</a></dd>
+                <dd><a href="">日志管理</a></dd>
+              </dl>
+            </li>
+          </ul>
         <ul class="layui-nav" lay-filter="">
           <li class="layui-nav-item">
             <a href="" title="消息">
@@ -34,7 +46,8 @@
           </li>
           <li class="layui-nav-item"><img src="/images/logo.png" class="layui-circle" style="border: 2px solid #A9B7B7;"
               width="35px" alt=""></li>
-          <li class="layui-nav-item"> <a href="javascript:;"><?=$data['username']?></a>
+          <li class="layui-nav-item"> <a href="javascript:;">
+              <?=$data['username']?></a>
             <dl class="layui-nav-child">
               <!-- 二级菜单 -->
               <dd><a href="">个人信息</a></dd>
@@ -49,6 +62,7 @@
     <div class="layui-side layui-bg-black x-side" style="left:-200px;">
       <div class="layui-side-scroll">
         <ul class="layui-nav layui-nav-tree site-demo-nav" lay-filter="side">
+         
           <li class="layui-nav-item"> <a class="javascript:;" href="javascript:;"> <i class="layui-icon" style="top: 3px;">&#xe607;</i><cite>博文管理</cite>
             </a>
             <dl class="layui-nav-child">
@@ -92,11 +106,9 @@
             </a>
             <dl class="layui-nav-child">
               <dd class=""> <a href="javascript:;" _href="/user/index"> <cite>用户列表</cite> </a> </dd>
-              <!-- <dd class=""> <a href="javascript:;" _href="/user/delList"> <cite>删除用户</cite> </a> </dd> -->
               <dd class=""> <a href="javascript:;" _href="/user/level"> <cite>等级管理</cite> </a> </dd>
               <dd class=""> <a href="javascript:;" _href="/user/kiss"> <cite>积分管理</cite> </a> </dd>
               <dd class=""> <a href="javascript:;" _href="/user/view"> <cite>浏览记录</cite> </a> </dd>
-              <!-- <dd class=""> <a href="javascript:;" _href="/user/view"> <cite>分享记录</cite> </a> </dd> -->
             </dl>
           </li>
           <li class="layui-nav-item"> <a class="javascript:;" href="javascript:;"> <i class="layui-icon" style="top: 3px;">&#xe613;</i><cite>管理员管理</cite>
@@ -125,6 +137,7 @@
             </dl>
           </li>
           <li class="layui-nav-item" style="height: 30px; text-align: center"> </li>
+
         </ul>
       </div>
     </div>

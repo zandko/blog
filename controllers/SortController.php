@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 namespace controllers;
 
@@ -14,22 +14,9 @@ class SortController extends BaseController
     public function index()
     {
         $model = new Sort;
-        $data = $model->findAll([
-            'order_by' => 'concat(path,id,"-")',
-            'order_way' => 'asc',
-            'per_page' => 100,
-        ]);
-
-        view('admin.sorts.sort_list', $data);
-    }
-
-    public function ajax_get_cat()
-    {
-        $id = (int) $_GET['id'];
-        $model = new Sort;
-        $data = $model->getCat($id);
-
-        echo json_encode($data);
+        $data = $model->tree();     
+      
+        view('admin.sorts.sort_list',$data);
     }
 
     /**
@@ -43,11 +30,11 @@ class SortController extends BaseController
         $model->fill($_POST);
         $model->insert();
 
-        $db = \libs\Db::getInstance();
-        $id = $db->lastInsertId();
-
-        $data = $model->findOne($id);
-        echo json_encode($data);
+        echo json_encode([
+            'data' => $_POST,
+            'status' => '200',
+            'messages' => '添加成功!',
+        ]);
     }
 
     /**
@@ -58,17 +45,11 @@ class SortController extends BaseController
     public function edit()
     {
         $model = new Sort;
-
         $data = $model->findOne($_GET['id']);
-
-        $dataAll = $model->findAll([
-            'order_by' => 'concat(path,id,"-")',
-            'order_way' => 'asc',
-        ]);
-
-        view('admin.sorts.sort_edit', [
+        $dataAll = $model->tree();
+        view('admin.sorts.sort_edit',[
             'data' => $data,
-            'dataAll' => $dataAll,
+            'dataAll' => $dataAll, 
         ]);
     }
 
@@ -77,30 +58,31 @@ class SortController extends BaseController
      *
      * @access public
      */
-    public function update()
-    {
-        $model = new Sort;
-        $model->fill($_POST);
-        $model->update($_GET['id']);
+     public function update()
+     {
+         $model = new Sort;
+         $model->fill($_POST);
+         $model->update($_GET['id']);
 
-        echo json_encode([
+         echo json_encode([
             'status' => '200',
-            'messages' => '添加成功!',
-        ]);
-    }
+            'messages' => '修改成功!',
+         ]);
+     }
 
     /**
      * 处理要删除的数据
      *
      * @access public
      */
-    public function delete()
-    {
-        $model = new Sort;
-        $model->delete($_GET['id']);
-        echo json_encode([
-            'status' => '200',
-            'messages' => '删除成功!',
-        ]);
-    }
+     public function delete()
+     {
+         $model = new Sort;
+         $model->delete($_POST['id']);
+
+         echo json_encode([
+             'status' => '200',
+             'messages' => '已删除!',
+         ]);
+     }
 }

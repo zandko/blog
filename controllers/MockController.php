@@ -32,14 +32,15 @@ class MockController
         $pdo->exec('TRUNCATE blogs');
 
         for ($i = 0; $i < 300; $i++) {
-            $title = $this->getChar(rand(20, 50));
-            $content = $this->getChar(rand(50, 150));
-            $display = rand(10, 500);
-            $is_show = rand(0, 1);
+            $article_title = $this->getChar(rand(20, 50));
+            $article_content = $this->getChar(rand(50, 150));
+            $article_views = rand(10, 500);
+            $article_comment_count = rand(10, 500);
+            $article_like_count = rand(10, 500);
             $date = rand(1233333399, 1535592288);
             $date = date('Y-m-d H:i:s', $date);
             $user_id = rand(1, 20);
-            $pdo->exec("INSERT INTO blogs (title,content,display,is_show,created_at,user_id) VALUES('$title','$content',$display,$is_show,'$date','$user_id')");
+            $pdo->exec("INSERT INTO articles (article_title,article_content,article_views,article_comment_count,article_like_count,user_id,created_at) VALUES('$article_title','$article_content',$article_views,$article_comment_count,'$article_like_count','$user_id','$date')");
         }
     }
 

@@ -12,6 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
+    <link rel="stylesheet" href="/css/page.css">
     <link rel="stylesheet" href="/css/x-admin.css" media="all">
 </head>
 
@@ -46,8 +47,8 @@
             </div>
         </form>
         <xblock><button class="layui-btn layui-btn-danger" onclick="delAll()"><i class="layui-icon">&#xe640;</i>批量删除</button><button
-                class="layui-btn" onclick="question_add('添加问题','/test/article_add','600','500')"><i class="layui-icon">&#xe608;</i>添加</button><span
-                class="x-right" style="line-height:40px">共有数据：88 条</span></xblock>
+                class="layui-btn" onclick="question_add('发表博文','/article/create','1000','700')"><i class="layui-icon">&#xe608;</i>发表博文</button><span
+                class="x-right" style="line-height:40px">共有数据：<?=$data['count']?> 条</span></xblock>
         <table class="layui-table">
             <thead>
                 <tr>
@@ -63,14 +64,21 @@
                     <th>
                         分类
                     </th>
+
                     <th>
-                        来源
-                    </th>
-                    <th>
-                        更新时间
+                        点赞数量
                     </th>
                     <th>
                         浏览次数
+                    </th>
+                    <th>
+                        评论总数
+                    </th>
+                    <th>
+                        发表时间
+                    </th>
+                    <th>
+                        更新时间
                     </th>
                     <th>
                         操作
@@ -78,64 +86,69 @@
                 </tr>
             </thead>
             <tbody>
+                <?php foreach($data['data'] as $v): ?>
                 <tr>
                     <td>
                         <input type="checkbox" value="1" name="">
                     </td>
                     <td>
-                        1
+                        <?=$v['id']?>
                     </td>
                     <td>
                         <u style="cursor:pointer" onclick="question_show()">
-                            问题标题
+                            <?=$v['article_title']?>
                         </u>
                     </td>
                     <td>
-                        新闻子类1
+                        <?php foreach($sort as $v1): ?>
+                        <?php foreach($article_sort as $v2): ?>
+                            <?php if($v['id']==$v2['article_id'] && $v1['id']==$v2['sort_id']): ?>
+                                <?=$v1['sort_name']?>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                        <?php endforeach; ?>
                     </td>
                     <td>
-                        erdangjiade
+                        <?=$v['article_like_count']?>
                     </td>
                     <td>
-                        2017-01-01 11:11:42
+                        <?=$v['article_views']?>
                     </td>
                     <td>
-                        34
+                        <?=$v['article_comment_count']?>
+                    </td>
+                    <td>
+                        <?=$v['created_at']?>
+                    </td>
+                    <td>
+                        <?=$v['updated_at']?>
                     </td>
                     <td class="td-manage">
-                        <a title="编辑" href="javascript:;" onclick="question_edit('编辑','/test/article_edit','4','','510')"
+                        <a title="编辑" href="javascript:;" onclick="question_edit('编辑','/article/edit?id=<?=$v['id']?>','4','1000','700')"
                             class="ml-5" style="text-decoration:none">
                             <i class="layui-icon">&#xe642;</i>
                         </a>
-                        <a title="删除" href="javascript:;" onclick="question_del(this,'1')" style="text-decoration:none">
+                        <a title="删除" href="javascript:;" onclick="question_del(this,'<?=$v['id']?>')" style="text-decoration:none">
                             <i class="layui-icon">&#xe640;</i>
                         </a>
                     </td>
                 </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
 
-        <div id="page"></div>
+        <?=$data['page']?>
     </div>
     <script src="/lib/layui/layui.js" charset="utf-8"></script>
     <script src="/js/x-layui.js" charset="utf-8"></script>
     <script>
-        layui.use(['laydate', 'element', 'laypage', 'layer'], function () {
+        layui.use(['laydate', 'element',  'layer'], function () {
             $ = layui.jquery;//jquery
             laydate = layui.laydate;//日期插件
             lement = layui.element();//面包导航
-            laypage = layui.laypage;//分页
             layer = layui.layer;//弹出层
 
-            //以上模块根据需要引入
-            laypage({
-                cont: 'page'
-                , pages: 100
-                , first: 1
-                , last: 100
-                , prev: '<em><</em>'
-                , next: '<em>></em>'
-            });
+          
 
             var start = {
                 min: laydate.now()
@@ -190,8 +203,22 @@
         function question_del(obj, id) {
             layer.confirm('确认要删除吗？', function (index) {
                 //发异步删除数据
-                $(obj).parents("tr").remove();
-                layer.msg('已删除!', { icon: 1, time: 1000 });
+                $.ajax({
+                    type:'POST',
+                    dataType:'json',
+                    url:'/article/delete',
+                    data:{
+                        id:id
+                    },
+                    success:function(data)
+                    {
+                        if(data.status=='200'){
+                            $(obj).parents("tr").remove();
+                            layer.msg(data.messages, { icon: 1, time: 1000 });
+                        }
+                    }
+                })
+                
             });
         }
     </script>

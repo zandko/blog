@@ -3,6 +3,7 @@
 namespace controllers;
 
 use models\Article;
+use models\Sort;
 
 class ArticleController extends BaseController
 {   
@@ -15,8 +16,20 @@ class ArticleController extends BaseController
     public function index()
     {
         $model = new Article;
-        $data = $model->findAll();
-        view('admin.articles.article_list', $data);
+        $data = $model->findAll([
+            'per_page' => 14,
+        ]);
+
+        $article_sort = $model -> article_sort();
+
+        $sort = new Sort;
+        $sort_list = $sort->findAll();
+
+        view('admin.article.article_list', [
+            'data' => $data,
+            'sort' => $sort_list['data'],
+            'article_sort' => $article_sort,
+        ]);
     }
 
     /**
@@ -25,8 +38,10 @@ class ArticleController extends BaseController
      * @access public
      */
     public function create()
-    {
-        view('admin.article.article_create');
+    {   
+        $model = new Sort;
+        $data = $model->tree();
+        view('admin.article.article_create',$data);
     }
 
     /**
@@ -39,6 +54,11 @@ class ArticleController extends BaseController
         $model = new Article;
         $model->fill($_POST);
         $model->insert();
+
+        echo json_encode([
+            'status' => '200',
+            'messages' => '发表成功!',
+        ]);
     }
 
     /**
@@ -50,8 +70,13 @@ class ArticleController extends BaseController
     {
         $model = new Article;
         $data = $model->findOne($_GET['id']);
+        $article_sort = $model -> article_sort();
+        $sort = new Sort;
+        $dataAll = $sort->tree();
         view('admin.article.article_edit', [
             'data' => $data,
+            'dataAll' => $dataAll,
+            'article_sort' => $article_sort,
         ]);
     }
 
@@ -65,6 +90,11 @@ class ArticleController extends BaseController
         $model = new Article;
         $model->fill($_POST);
         $model->update($_GET['id']);
+
+        echo json_encode([
+            'status' => '200',
+            'messages' => '修改成功!',
+        ]);
     }
 
     /**
@@ -75,6 +105,11 @@ class ArticleController extends BaseController
     public function delete()
     {
         $model = new Article;
-        $model->delete($_GET['id']);
+        $model->delete($_POST['id']);
+
+        echo json_encode([
+            'status' => '200',
+            'messages' => '已删除!',
+        ]);
     }
 }

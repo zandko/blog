@@ -9,12 +9,14 @@ class Sort extends Model
      * $protected $fillable  白名单
      */
     protected $tableName = 'sorts';
-    protected $fillable = ['sort_name', 'path', 'parent_sort_id'];
+    protected $fillable = ['sort_name',  'parent_id'];
 
-    public function getCat($parent_id = 0)
+    protected function _before_delete()
     {
-        return $this->findAll([
-            'where' => ' parent_sort_id=' . $parent_id,
+        $sql = "DELETE FROM sorts WHERE parent_id = ?";
+        $stmt = $this->_db->prepare($sql);
+        $stmt->execute([
+            $_GET['id'],
         ]);
     }
 }
