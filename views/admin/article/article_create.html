@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <title>
-        阳光成单系统
+        zane博客
     </title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -56,6 +56,13 @@
                         </select>
                     </div>
                 </div>
+                <br>
+                <div class="layui-col-xs4 layui-col-sm5 layui-col-md4">
+                    <?php foreach($label as $v): ?>
+                    <input type="checkbox" name="noList" value="<?=$v['id']?>" title="<?=$v['label_name']?>">
+                    <?php endforeach; ?>
+                </div>
+                
             </div>
             <div class="layui-form-item">
                 <button class="layui-btn" lay-filter="add" lay-submit>
@@ -90,8 +97,13 @@
             //监听提交
             form.on('submit(add)', function (data) {
                 data.field.article_content = layedit.getContent(editIndex);
+                var noList = new Array;
+                $("input:checkbox[name='noList']:checked").each(function(){
+                    noList.push($(this).val());
+                })
+                data.field.noList = noList;
                 var article = data.field;
-
+      
                 $.ajax({
                     type:'POST',
                     dataType:'json',

@@ -33,7 +33,7 @@ class RoleController extends BaseController
     {
         $model = new Privilege;
         $data = $model->tree();
-
+        
         view('admin.istrators.role_add', $data);
     }
 

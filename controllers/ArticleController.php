@@ -4,6 +4,7 @@ namespace controllers;
 
 use models\Article;
 use models\Sort;
+use models\Label;
 
 class ArticleController extends BaseController
 {   
@@ -16,8 +17,28 @@ class ArticleController extends BaseController
     public function index()
     {
         $model = new Article;
+        $where = '1'; 
+        // SELECT a.*,group_concat(c.label_name) label_name,group_concat(c.label_description) label_description
+        // from articles a 
+        // left join set_article_label b on a.id = b.article_id
+        // left join labels c on b.label_id = c.id
+        // group by a.id
+        if (isset($_GET['keyword']) && $_GET['keyword']) {
+            $where .= " AND (article_title LIKE '%{$_GET['keyword']}%' OR article_content LIKE '%{$_GET['keyword']}%') ";
+        }
+        if (isset($_GET['start']) && $_GET['start']) {
+            $where .= " AND created_at >= '{$_GET['start']}' ";
+        }   
+        if (isset($_GET['end']) && $_GET['end']) {
+            $where .= " AND created_at <= '{$_GET['end']}' ";
+        }
+
         $data = $model->findAll([
-            'per_page' => 14,
+            'fields' => ' a.*,group_concat(c.label_name) label_name',
+            'join' => ' a left join set_article_label b on a.id = b.article_id left join labels c on b.label_id = c.id',
+            'groupby' => 'group by a.id',
+            'per_page' => 12,
+            'where' => $where,
         ]);
 
         $article_sort = $model -> article_sort();
@@ -41,7 +62,12 @@ class ArticleController extends BaseController
     {   
         $model = new Sort;
         $data = $model->tree();
-        view('admin.article.article_create',$data);
+        $labelModel = new Label;
+        $label = $labelModel->findAll();
+        view('admin.article.article_create',[
+            'data' => $data,
+            'label' => $label['data'],
+        ]);
     }
 
     /**
@@ -73,10 +99,14 @@ class ArticleController extends BaseController
         $article_sort = $model -> article_sort();
         $sort = new Sort;
         $dataAll = $sort->tree();
+
+        $labelModel = new Label;
+        $label = $labelModel->findAll();
         view('admin.article.article_edit', [
             'data' => $data,
             'dataAll' => $dataAll,
             'article_sort' => $article_sort,
+            'label' => $label['data'],
         ]);
     }
 
@@ -111,5 +141,29 @@ class ArticleController extends BaseController
             'status' => '200',
             'messages' => '已删除!',
         ]);
+    }
+
+    /**
+     * 批量处理要删除的数据
+     *
+     * @access public
+     */
+    public function delAll()
+    {
+        $model = new Article;
+        $ret = $model->delAll();
+        
+        if($ret == true) {
+            echo json_encode([
+                'status' => '200',
+                'messages' => '删除成功!',
+            ]);
+        }else {
+            echo json_encode([
+                'status' => '404',
+                'errormsg' => '删除失败!',
+            ]);
+        }
+       
     }
 }

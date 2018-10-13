@@ -24,16 +24,38 @@ class Article extends Model
             $id,
         ]);
 
+        $stmt = $this->_db->prepare("DELETE FROM set_article_label WHERE article_id=?");
+        $stmt->execute([
+            $id,
+        ]);
+
         $stmt = $this->_db->prepare("INSERT INTO article_sort(article_id,sort_id) VALUES(?,?)");
         $stmt->execute([
             $id,
             $_POST['sort_id'],
         ]);
+
+        $stmt = $this->_db->prepare("INSERT INTO set_article_label(article_id,label_id) VALUES(?,?)");
+      
+        if(isset($_POST['noList'])){
+            
+            foreach($_POST['noList'] as $v) {
+                $stmt->execute([
+                    $id,
+                    $v,
+                ]);
+                
+                
+            }
+        }
     }
 
     protected function _before_delete()
     {   
-
+        $stmt = $this->_db->prepare("DELETE FROM set_article_label WHERE article_id=?");
+        $stmt->execute([
+            $_POST['id'],
+        ]);
         $stmt = $this->_db->prepare("DELETE FROM article_sort WHERE article_id=?");
         $stmt->execute([
             $_POST['id'],
@@ -45,5 +67,32 @@ class Article extends Model
         $stmt = $this->_db->prepare("SELECT * FROM article_sort");
         $stmt->execute();
         return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
+
+    public function delAll()
+    {   
+        if(isset($_POST['noList'])){
+
+            $stmt = $this->_db->prepare("DELETE FROM article_sort WHERE article_id=?");
+            $stmts = $this->_db->prepare("DELETE FROM set_article_label WHERE article_id=?");
+            $keys = [];
+            $values = [];
+            foreach ($_POST['noList'] as $v) {
+                $keys[] = '?';
+                $values[] = $v;
+                $stmt->execute([
+                    $v,
+                ]);
+                $stmts->execute([
+                    $v,
+                ]);
+            }
+            $keys = implode(',', $keys);
+            $sql = "DELETE FROM articles WHERE id in($keys)";
+            $stmt = $this->_db->prepare($sql);
+            return $stmt->execute($values);
+        }else {
+            return false;
+        }
     }
 }

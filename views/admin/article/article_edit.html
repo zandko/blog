@@ -44,24 +44,30 @@
                     <div class="layui-input-block">
                         <select lay-verify="required" name="sort_id">
                             <?php foreach($dataAll as $v1): ?>
-                            <?php foreach($article_sort as $v2): ?>
-                                <?php if($data['id']==$v2['article_id'] && $v1['id']==$v2['sort_id']): ?>
-                                    <option><?=$v1['sort_name']?></option>
-                                <?php else: ?>
-                                    <option></option>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
+                                <?php foreach($article_sort as $v2): ?>
+                                    <?php if($data['id']==$v2['article_id'] && $v1['id']==$v2['sort_id']): ?>
+                                        <option><?=$v1['sort_name']?></option>
+                                    <?php else: ?>
+                                        <option></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
                             <?php endforeach; ?>
                             
                             <?php foreach($dataAll as $v): ?>
-                            <?php if($v['parent_id']=='0'):?>
-                            <optgroup label="<?=$v['sort_name']?>">
+                                <?php if($v['parent_id']=='0'):?>
+                                    <optgroup label="<?=$v['sort_name']?>">
                                 <?php else: ?>
-                                <option value="<?=$v['id']?>"><?=str_repeat('&nbsp;',$v['level']*4)?><?=$v['sort_name']?></option>
+                                    <option value="<?=$v['id']?>"><?=str_repeat('&nbsp;',$v['level']*4)?><?=$v['sort_name']?></option>
                                 <?php endif;?>
-                            </optgroup>
+                                    </optgroup>
                             <?php endforeach; ?>
                         </select>
+                    </div>
+                    <br>
+                    <div class="layui-col-xs4 layui-col-sm5 layui-col-md4">
+                        <?php foreach($label as $v): ?>
+                        <input type="checkbox" name="noList" value="<?=$v['id']?>" title="<?=$v['label_name']?>">
+                        <?php endforeach; ?>
                     </div>
                 </div>
             </div>
@@ -98,6 +104,11 @@
             //监听提交
             form.on('submit(add)', function (data) {
                 data.field.article_content = layedit.getContent(editIndex);
+                var noList = new Array;
+                $("input:checkbox[name='noList']:checked").each(function(){
+                    noList.push($(this).val());
+                })
+                data.field.noList = noList;
                 var article = data.field;
                 var id = "<?=$data['id']?>";
                 $.ajax({
