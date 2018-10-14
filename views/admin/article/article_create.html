@@ -12,7 +12,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="format-detection" content="telephone=no">
-    <link rel="stylesheet" href="/css/x-admin.css" media="all">
+    <link rel="stylesheet" href="/css/x-admin.css" media="all"> 
+    <!-- <link rel="stylesheet" href="/cropper/cropper.min.css"> -->
 </head>
 
 <body>
@@ -75,6 +76,7 @@
     </script>
     <script src="/js/x-layui.js" charset="utf-8">
     </script>
+    <!-- <script src="/cropper/cropper.min.js"></script> -->
     <script>
         layui.use(['form', 'layer', 'layedit'], function () {
             $ = layui.jquery;
@@ -92,11 +94,11 @@
 
             //创建一个编辑器
             editIndex = layedit.build('L_content');
-            
 
             //监听提交
             form.on('submit(add)', function (data) {
-                data.field.article_content = layedit.getContent(editIndex);
+                data.field.article_content = layedit.getContent(editIndex);   
+                // console.log(data.field.article_content);
                 var noList = new Array;
                 $("input:checkbox[name='noList']:checked").each(function(){
                     noList.push($(this).val());
