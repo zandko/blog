@@ -14,6 +14,7 @@
     <meta name="format-detection" content="telephone=no">
     <link rel="stylesheet" href="/css/x-admin.css" media="all"> 
     <!-- <link rel="stylesheet" href="/cropper/cropper.min.css"> -->
+ 
 </head>
 
 <body>
@@ -58,6 +59,27 @@
                     </div>
                 </div>
                 <br>
+
+
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend>封面图片上传</legend>
+                 </fieldset>
+
+                 <div>
+                        <input type="radio" title="不选" name="logoType" onclick="clickRadio()" value="0" checked id="">
+                        <input type="radio" title="单张" name="logoType" onclick="clickRadio()" value="1" id=""> 
+                        <input type="radio" title="三张" name="logoType" onclick="clickRadio()" value="3" id=""> 
+                        <input type="radio" title="大图" name="logoType" onclick="clickRadio()" value="大" id=""> 
+                 </div>
+                   
+                    <br>
+                    <div class="uploadImgBtn" id="uploadImgBtn">
+                        <input class="uploadImg" type="file" name="logo[]"  multiple id="file">
+                    </div>
+
+                
+                <br>
+                <br>
                 <div class="layui-col-xs4 layui-col-sm5 layui-col-md4">
                     <?php foreach($label as $v): ?>
                     <input type="checkbox" name="noList" value="<?=$v['id']?>" title="<?=$v['label_name']?>">
@@ -75,14 +97,16 @@
     <script src="/lib/layui/layui.js" charset="utf-8">
     </script>
     <script src="/js/x-layui.js" charset="utf-8">
-    </script>
-    <!-- <script src="/cropper/cropper.min.js"></script> -->
+    </script> 
+    
     <script>
-        layui.use(['form', 'layer', 'layedit'], function () {
+          
+        layui.use(['form','layer', 'layedit'], function () {
             $ = layui.jquery;
             var form = layui.form()
                 , layer = layui.layer
                 , layedit = layui.layedit;
+              
 
 
             layedit.set({
@@ -91,37 +115,109 @@
                     , type: 'post' //默认post
                 }
             })
-
+            
+              
             //创建一个编辑器
             editIndex = layedit.build('L_content');
+
+        //     $(document).ready(function(){
+        //         //为外面的盒子绑定一个点击事件
+        //         $("#uploadImgBtn").click(function(){
+        //             /*
+        //             1、先获取input标签
+        //             2、给input标签绑定change事件
+        //             3、把图片回显
+        //             */
+        // //            1、先回去input标签
+        //             var $input = $("#file");
+        //             console.log($input)
+        // //            2、给input标签绑定change事件
+        //             $input.on("change" , function(){
+        //                 console.log(this)
+        //                 //补充说明：因为我们给input标签设置multiple属性，因此一次可以上传多个文件
+        //                 //获取选择图片的个数
+        //                 var files = this.files;
+        //                 var length = files.length;
+        //                 console.log("选择了"+length+"张图片");
+        //                 //3、回显
+        //                 $.each(files,function(key,value){
+        //                     //每次都只会遍历一个图片数据
+        //                     var div = document.createElement("div"),
+        //                         img = document.createElement("img");
+        //                     div.className = "pic";
+
+        //                     var fr = new FileReader();
+        //                     fr.onload = function(){
+        //                         img.src=this.result;
+        //                         div.appendChild(img);
+        //                         document.body.appendChild(div);
+        //                     }
+        //                     fr.readAsDataURL(value);
+        //                 })
+
+        //             })
+
+        //             //4、我们把当前input标签的id属性remove
+        //             $input.removeAttr("id");
+        //             //我们做个标记，再class中再添加一个类名就叫test
+        //             var newInput = '<input class="uploadImg test" type="file" name="logo[]" multiple id="file">';
+        //             $(this).append($(newInput));
+
+        //         })
+
+        //     })
+
 
             //监听提交
             form.on('submit(add)', function (data) {
                 data.field.article_content = layedit.getContent(editIndex);   
-                // console.log(data.field.article_content);
                 var noList = new Array;
                 $("input:checkbox[name='noList']:checked").each(function(){
                     noList.push($(this).val());
                 })
-                data.field.noList = noList;
-                var article = data.field;
-      
+                
+                var file = $("input[name='logo[]']").prop('files');
+                var logo = new Array;
+                var logo = file;
+                console.log(logo);
+                var f = new FormData
+
+                for(var i = 0;i<logo.length;i++) 
+                {   
+                    f.append("logo["+i+"]",logo[i]);
+                }
+                
+                f.append("article_title",data.field.article_title)
+                f.append("article_content",data.field.article_content)
+                f.append("logoType",data.field.logoType)
+                f.append("noList",data.field.noList)
+                f.append("sort_id",data.field.sort_id)
+            
+               
+                // fill(f, data.field)
+
+                // f.append("xx",JSON.stringify(data.field))
+
                 $.ajax({
+
                     type:'POST',
                     dataType:'json',
                     url:'/article/insert',
-                    data:article,
+                    data:f,
+                    processData:false, 
+                    contentType:false,
                     success:function(data){
-                        if(data.status == '200') {
-                            //发异步，把数据提交给php
-                            layer.alert(data.messages, { icon: 6 }, function () {
-                                // 获得frame索引
-                                var index = parent.layer.getFrameIndex(window.name);
-                                //关闭当前frame
-                                window.parent.location.reload();
-                                parent.layer.close(index);
-                            });
-                        }
+                        console.log(data);
+                        // if(data.status == '200') {
+                        //     //发异步，把数据提交给php
+                        //     layer.alert(data.messages, { icon: 6 }, function () {
+                        //         // 获得frame索引
+                        //         var index = parent.layer.getFrameIndex(window.name);
+                        //         //关闭当前frame
+                        //         window.parent.location.reload();
+                        //         parent.layer.close(index);
+                        //     });
+                        // }
                     }
                 })
                 
@@ -130,6 +226,9 @@
 
 
         });
+
+          
+         
     </script>
 
 </body>

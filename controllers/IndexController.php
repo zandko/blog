@@ -21,9 +21,29 @@ class IndexController
             'where' => ' parent_id = 0',
         ]);
 
+        $article = $articleModel->findAll([
+            'per_page' => 25,
+        ]);
+
+        $logo = $articleModel->logo();
+
         view('front.index',[
             'display' => $display['data'],
             'sort' => $sort['data'],
+            'article' => $article,
+            'logo' => $logo,
+        ]);
+    }
+
+    public function ajax_newblogs()
+    {   
+        $articleModel = new Article;
+        $article = $articleModel->findAll([
+            'per_page' => 9999,
+        ]);
+
+        echo json_encode([
+            'article' => $article['data'],
         ]);
     }
 

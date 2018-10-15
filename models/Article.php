@@ -2,6 +2,8 @@
 
 namespace models;
 
+use libs\Image;
+
 class Article extends Model
 {
     /**
@@ -9,7 +11,14 @@ class Article extends Model
      * $protected $fillable  白名单
      */
     protected $tableName = 'articles';
-    protected $fillable = ['user_id', 'article_title', 'article_content', 'article_views', 'article_comment_count', 'article_like_count'];
+    protected $fillable = ['user_id', 'article_title', 'article_content', 'article_views', 'article_comment_count', 'article_like_count','logoType','logo'];
+
+    public function logo()
+    {
+        $stmt = $this->_db->prepare("SELECT * FROM article_logo");
+        $stmt->execute();
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    }
 
     protected function _before_write()
     {
@@ -17,8 +26,49 @@ class Article extends Model
     }
 
     protected function _after_write()
-    {
+    {       
         $id = isset($_GET['id']) ? $_GET['id'] : $this->data['id'];
+        
+        if(!empty($_FILES)) {
+            $stmt = $this->_db->prepare("INSERT INTO article_logo(article_id,logo) VALUES(?,?)");
+       
+            $tmp_name = [];
+
+            foreach($_FILES['logo']['name'] as $k => $v) {
+
+                $tmp_name['name'] = $v;
+                $tmp_name['error'] = $_FILES['logo']['error'][$k];
+                $tmp_name['size'] = $_FILES['logo']['size'][$k];
+                $tmp_name['tmp_name'] = $_FILES['logo']['tmp_name'][$k];
+                $tmp_name['type'] = $_FILES['logo']['type'][$k];
+
+                $_FILES['tmp'] = $tmp_name;
+
+                $file = $_FILES['tmp'];
+                
+                $image = new Image($file);
+                
+                // if($_POST['logoType']=='大') {
+
+                // }else {
+                    $image->thumb = array(
+                        'is_thumb' => 1,
+                        'width' => 640,
+                        'height' => 426,
+                    );
+                // }
+                
+                
+                $ret = $image->save('/home/zan/project/Practice/public/uploads/article/thum/');
+                $_ret = substr($ret, strpos($ret, '/') + 33);
+                $stmt->execute([
+                    $id,
+                    $_ret,
+                ]);
+            }
+        }
+        
+
         $stmt = $this->_db->prepare("DELETE FROM article_sort WHERE article_id=?");
         $stmt->execute([
             $id,
@@ -44,8 +94,6 @@ class Article extends Model
                     $id,
                     $v,
                 ]);
-                
-                
             }
         }
     }

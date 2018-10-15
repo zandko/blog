@@ -5,10 +5,10 @@ namespace controllers;
 use models\Article;
 use models\Sort;
 use models\Label;
+use libs\Image;
 
 class ArticleController extends BaseController
 {   
-
     /**
      * 显示数据列表页
      *
@@ -18,11 +18,7 @@ class ArticleController extends BaseController
     {
         $model = new Article;
         $where = '1'; 
-        // SELECT a.*,group_concat(c.label_name) label_name,group_concat(c.label_description) label_description
-        // from articles a 
-        // left join set_article_label b on a.id = b.article_id
-        // left join labels c on b.label_id = c.id
-        // group by a.id
+  
         if (isset($_GET['keyword']) && $_GET['keyword']) {
             $where .= " AND (article_title LIKE '%{$_GET['keyword']}%' OR article_content LIKE '%{$_GET['keyword']}%') ";
         }
@@ -76,11 +72,11 @@ class ArticleController extends BaseController
      * @access public
      */
     public function insert()
-    {
+    {   
         $model = new Article;
         $model->fill($_POST);
         $model->insert();
-
+       
         echo json_encode([
             'status' => '200',
             'messages' => '发表成功!',
@@ -116,11 +112,13 @@ class ArticleController extends BaseController
      * @access public
      */
     public function update()
-    {
+    {   
+      
         $model = new Article;
         $model->fill($_POST);
         $model->update($_GET['id']);
 
+        
         echo json_encode([
             'status' => '200',
             'messages' => '修改成功!',
