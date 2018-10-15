@@ -27,6 +27,7 @@ class IndexController
 
         $logo = $articleModel->logo();
 
+        
         view('front.index',[
             'display' => $display['data'],
             'sort' => $sort['data'],

@@ -13,8 +13,8 @@ class UploadController
 
         $image->thumb = array(
             'is_thumb' => 1,
-            'width' => 200,
-            'height' => 200,
+            'width' => 620,
+            'height' => 620,
         );
 
         $ret = $image->save('/home/zan/project/Practice/public/uploads/article/');

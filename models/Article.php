@@ -28,7 +28,23 @@ class Article extends Model
     protected function _after_write()
     {       
         $id = isset($_GET['id']) ? $_GET['id'] : $this->data['id'];
-        
+
+        $stmt = $this->_db->prepare("SELECT * FROM article_logo WHERE article_id=?");
+        $stmt->execute([
+            $id,
+        ]);
+        $data = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        foreach($data as $v){
+            unlink("/home/zan/project/Practice/public".$v['logo']);
+        }
+
+        $stmt = $this->_db->prepare("DELETE FROM article_logo WHERE article_id=?");
+
+        $stmt->execute([
+            $id,
+        ]);
+
         if(!empty($_FILES)) {
             $stmt = $this->_db->prepare("INSERT INTO article_logo(article_id,logo) VALUES(?,?)");
        
@@ -47,18 +63,13 @@ class Article extends Model
                 $file = $_FILES['tmp'];
                 
                 $image = new Image($file);
-                
-                // if($_POST['logoType']=='大') {
-
-                // }else {
+ 
                     $image->thumb = array(
                         'is_thumb' => 1,
                         'width' => 640,
                         'height' => 426,
                     );
-                // }
-                
-                
+
                 $ret = $image->save('/home/zan/project/Practice/public/uploads/article/thum/');
                 $_ret = substr($ret, strpos($ret, '/') + 33);
                 $stmt->execute([
@@ -99,7 +110,22 @@ class Article extends Model
     }
 
     protected function _before_delete()
-    {   
+    {      
+        $stmt = $this->_db->prepare("SELECT * FROM article_logo WHERE article_id=?");
+        $stmt->execute([
+            $_POST['id'],
+        ]);
+        $data = $stmt->fetcAll(\PDO::FETCH_ASSOC);
+
+        foreach($data as $v){
+            unlink("/home/zan/project/Practice/public".$v['logo']);
+        }
+
+        $stmt = $this->_db->prepare("DELETE FROM article_logo WHERE article_id=?");
+        $stmt->execute([
+            $_POST['id'],
+        ]);
+
         $stmt = $this->_db->prepare("DELETE FROM set_article_label WHERE article_id=?");
         $stmt->execute([
             $_POST['id'],

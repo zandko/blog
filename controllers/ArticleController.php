@@ -98,11 +98,15 @@ class ArticleController extends BaseController
 
         $labelModel = new Label;
         $label = $labelModel->findAll();
+
+        $logo = $model->logo();
+        // var_dump($logo);
         view('admin.article.article_edit', [
             'data' => $data,
             'dataAll' => $dataAll,
             'article_sort' => $article_sort,
             'label' => $label['data'],
+            'logo' => $logo,
         ]);
     }
 

@@ -73,11 +73,15 @@
                  </div>
                    
                     <br>
-                    <div class="uploadImgBtn" id="uploadImgBtn">
-                        <input class="uploadImg" type="file" name="logo[]"  multiple id="file">
+        
+
+                    <img width="100px" src="/images/20180308141927872.png" id="upload" /><br/>
+                    <input type="file" id="uploadfiles" name="logo[]" accept="image/png, image/jpeg, image/gif, image/jpg" multiple="multiple" style="display:none;"/>
+                    <span class="check-tips text-muted small">图片格式</span>
+                    <div id="images">
+                        <!--此处放凭证预览-->
                     </div>
 
-                
                 <br>
                 <br>
                 <div class="layui-col-xs4 layui-col-sm5 layui-col-md4">
@@ -120,52 +124,24 @@
             //创建一个编辑器
             editIndex = layedit.build('L_content');
 
-        //     $(document).ready(function(){
-        //         //为外面的盒子绑定一个点击事件
-        //         $("#uploadImgBtn").click(function(){
-        //             /*
-        //             1、先获取input标签
-        //             2、给input标签绑定change事件
-        //             3、把图片回显
-        //             */
-        // //            1、先回去input标签
-        //             var $input = $("#file");
-        //             console.log($input)
-        // //            2、给input标签绑定change事件
-        //             $input.on("change" , function(){
-        //                 console.log(this)
-        //                 //补充说明：因为我们给input标签设置multiple属性，因此一次可以上传多个文件
-        //                 //获取选择图片的个数
-        //                 var files = this.files;
-        //                 var length = files.length;
-        //                 console.log("选择了"+length+"张图片");
-        //                 //3、回显
-        //                 $.each(files,function(key,value){
-        //                     //每次都只会遍历一个图片数据
-        //                     var div = document.createElement("div"),
-        //                         img = document.createElement("img");
-        //                     div.className = "pic";
 
-        //                     var fr = new FileReader();
-        //                     fr.onload = function(){
-        //                         img.src=this.result;
-        //                         div.appendChild(img);
-        //                         document.body.appendChild(div);
-        //                     }
-        //                     fr.readAsDataURL(value);
-        //                 })
+            $('#upload').click(function(){
+                $('#uploadfiles').trigger('click');
+            });
+    		
+            //图片预览
+            $('#uploadfiles').change(function(){
+                var filesList = document.getElementById('uploadfiles').files;
+                var str = '';
+                if(filesList.length > 0){
+                    for(var i = 0;i < filesList.length;i++){
+                        var src = window.URL.createObjectURL(filesList[i]);
+                        str += '<img style="width:100px;" src="' + src + '" class="preview"/>';
+                 }
+                $('#images').empty().append(str);
+                }
+            });
 
-        //             })
-
-        //             //4、我们把当前input标签的id属性remove
-        //             $input.removeAttr("id");
-        //             //我们做个标记，再class中再添加一个类名就叫test
-        //             var newInput = '<input class="uploadImg test" type="file" name="logo[]" multiple id="file">';
-        //             $(this).append($(newInput));
-
-        //         })
-
-        //     })
 
 
             //监听提交
@@ -193,11 +169,6 @@
                 f.append("noList",data.field.noList)
                 f.append("sort_id",data.field.sort_id)
             
-               
-                // fill(f, data.field)
-
-                // f.append("xx",JSON.stringify(data.field))
-
                 $.ajax({
 
                     type:'POST',
@@ -207,17 +178,16 @@
                     processData:false, 
                     contentType:false,
                     success:function(data){
-                        console.log(data);
-                        // if(data.status == '200') {
-                        //     //发异步，把数据提交给php
-                        //     layer.alert(data.messages, { icon: 6 }, function () {
-                        //         // 获得frame索引
-                        //         var index = parent.layer.getFrameIndex(window.name);
-                        //         //关闭当前frame
-                        //         window.parent.location.reload();
-                        //         parent.layer.close(index);
-                        //     });
-                        // }
+                        if(data.status == '200') {
+                            //发异步，把数据提交给php
+                            layer.alert(data.messages, { icon: 6 }, function () {
+                                // 获得frame索引
+                                var index = parent.layer.getFrameIndex(window.name);
+                                //关闭当前frame
+                                window.parent.location.reload();
+                                parent.layer.close(index);
+                            });
+                        }
                     }
                 })
                 

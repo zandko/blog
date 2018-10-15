@@ -19,7 +19,7 @@
     <div class="x-body">
         <form class="layui-form layui-form-pane">
             <div class="layui-form-item">
-                <label for="L_title" class="layui-form-label">
+                <label for="L_title" class="layui-form-label">  
                     标题
                 </label>
                 <div class="layui-input-block">
@@ -63,7 +63,40 @@
                             <?php endforeach; ?>
                         </select>
                     </div>
+
                     <br>
+
+
+                    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                        <legend>封面图片上传</legend>
+                     </fieldset>
+    
+                     <div>
+                            <input type="radio" title="不选" name="logoType" onclick="clickRadio()" value="0" checked id="">
+                            <input type="radio" title="单张" name="logoType" onclick="clickRadio()" value="1" id=""> 
+                            <input type="radio" title="三张" name="logoType" onclick="clickRadio()" value="3" id=""> 
+                            <input type="radio" title="大图" name="logoType" onclick="clickRadio()" value="大" id=""> 
+                     </div>
+                       
+                        <br>
+            
+    
+                        <img width="100px" src="/images/20180308141927872.png" id="upload" /><br/>
+                        <input type="file" id="uploadfiles" name="logo[]" accept="image/png, image/jpeg, image/gif, image/jpg" multiple="multiple" style="display:none;"/>
+                        <span class="check-tips text-muted small">图片格式</span>
+                        
+                        <div id="images">
+                            <?php foreach($logo as $vv):?>
+                                <?php if($vv['article_id']==$data['id']): ?>
+                            <img style="width:100px;" src="<?=$vv['logo']?>" class="preview"/>
+                                <?php endif; ?>
+                            <!--此处放凭证预览-->
+                            <?php endforeach; ?>
+                        </div>
+    
+                    <br>
+                    <br>
+
                     <div class="layui-col-xs4 layui-col-sm5 layui-col-md4">
                         <?php foreach($label as $v): ?>
                         <input type="checkbox" name="noList" value="<?=$v['id']?>" title="<?=$v['label_name']?>">
@@ -101,6 +134,23 @@
             editIndex = layedit.build('L_content');
             
 
+            $('#upload').click(function(){
+                $('#uploadfiles').trigger('click');
+            });
+    		
+            //图片预览
+            $('#uploadfiles').change(function(){
+                var filesList = document.getElementById('uploadfiles').files;
+                var str = '';
+                if(filesList.length > 0){
+                    for(var i = 0;i < filesList.length;i++){
+                        var src = window.URL.createObjectURL(filesList[i]);
+                        str += '<img style="width:100px;" src="' + src + '" class="preview"/>';
+                 }
+                $('#images').empty().append(str);
+                }
+            });
+
             //监听提交
             form.on('submit(add)', function (data) {
                 data.field.article_content = layedit.getContent(editIndex);
@@ -108,14 +158,32 @@
                 $("input:checkbox[name='noList']:checked").each(function(){
                     noList.push($(this).val());
                 })
-                data.field.noList = noList;
-                var article = data.field;
+
+                var file = $("input[name='logo[]']").prop('files');
+                var logo = new Array;
+                var logo = file;
+
+                var f = new FormData
+
+                for(var i = 0;i<logo.length;i++) 
+                {   
+                    f.append("logo["+i+"]",logo[i]);
+                }
+                
+                f.append("article_title",data.field.article_title)
+                f.append("article_content",data.field.article_content)
+                f.append("logoType",data.field.logoType)
+                f.append("noList",data.field.noList)
+                f.append("sort_id",data.field.sort_id)
+
                 var id = "<?=$data['id']?>";
                 $.ajax({
                     type:'POST',
                     dataType:'json',
                     url:'/article/update?id='+id,
-                    data:article,
+                    data:f,
+                    processData:false, 
+                    contentType:false,
                     success:function(data){
                         if(data.status == '200') {
                             //发异步，把数据提交给php
